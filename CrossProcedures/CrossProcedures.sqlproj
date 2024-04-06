@@ -62,5 +62,7 @@
     <Build Include="Contains.sql" />
     <Build Include="DoesExists.sql" />
     <Build Include="NotContains.sql" />
+    <Build Include="DoesNotExists.sql" />
+    <Build Include="RangeFilter.sql" />
   </ItemGroup>
 </Project>
