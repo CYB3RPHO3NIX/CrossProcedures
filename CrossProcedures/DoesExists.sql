@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [cp].[DoesExists]
+﻿CREATE PROCEDURE [cp].[DoesExistsFilter]
     @SchemaName NVARCHAR(100),
     @TableName NVARCHAR(100),
     @ColumnName NVARCHAR(100),
