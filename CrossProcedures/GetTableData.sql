@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[ViewTableData]
+﻿CREATE PROCEDURE [cp].[GetTableData]
     @SchemaName NVARCHAR(100),
     @TableName NVARCHAR(100),
     @PageNumber INT = NULL,

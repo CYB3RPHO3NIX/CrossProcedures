@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[ContainsFilter]
+﻿CREATE PROCEDURE [cp].[ContainsFilter]
     @SchemaName NVARCHAR(100),
     @TableName NVARCHAR(100),
     @ColumnName NVARCHAR(100),

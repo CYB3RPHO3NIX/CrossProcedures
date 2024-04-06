@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[DoesExists]
+﻿CREATE PROCEDURE [cp].[DoesExists]
     @SchemaName NVARCHAR(100),
     @TableName NVARCHAR(100),
     @ColumnName NVARCHAR(100),
