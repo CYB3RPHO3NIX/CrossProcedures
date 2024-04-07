@@ -59,10 +59,12 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="GetTableData.sql" />
-    <Build Include="Contains.sql" />
-    <Build Include="DoesExists.sql" />
-    <Build Include="NotContains.sql" />
-    <Build Include="DoesNotExists.sql" />
+    <Build Include="ContainsFilter.sql" />
+    <Build Include="DoesExistsFilter.sql" />
+    <Build Include="NotContainsFilter.sql" />
+    <Build Include="DoesNotExistsFilter.sql" />
     <Build Include="RangeFilter.sql" />
+    <Build Include="HasOneOfFilter.sql" />
+    <Build Include="EqualsFilter.sql" />
   </ItemGroup>
 </Project>
