@@ -56,13 +56,12 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="Schema" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="GetTableData.sql" />
     <Build Include="ContainsFilter.sql" />
-    <Build Include="DoesExistsFilter.sql" />
     <Build Include="NotContainsFilter.sql" />
-    <Build Include="DoesNotExistsFilter.sql" />
     <Build Include="RangeFilter.sql" />
     <Build Include="HasOneOfFilter.sql" />
     <Build Include="EqualsFilter.sql" />
@@ -71,5 +70,6 @@
     <Build Include="GreaterThanFilter.sql" />
     <Build Include="LessThanFilter.sql" />
     <Build Include="NotHasOneOf.sql" />
+    <Build Include="Schema\cp.sql" />
   </ItemGroup>
 </Project>
