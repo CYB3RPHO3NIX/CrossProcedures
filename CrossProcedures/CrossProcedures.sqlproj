@@ -66,5 +66,9 @@
     <Build Include="RangeFilter.sql" />
     <Build Include="HasOneOfFilter.sql" />
     <Build Include="EqualsFilter.sql" />
+    <Build Include="GreaterThanOrEqualToFilter.sql" />
+    <Build Include="LessThanOrEqualTo.sql" />
+    <Build Include="GreaterThanFilter.sql" />
+    <Build Include="LessThanFilter.sql" />
   </ItemGroup>
 </Project>
