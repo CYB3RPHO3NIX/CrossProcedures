@@ -60,11 +60,11 @@ BEGIN
 		SET @Args = SUBSTRING(@CurrentArgs, @OpenParenIndex + 1, LEN(@CurrentArgs) - @OpenParenIndex - 1);
 
 		--we have @FilterName and @Args
+		--global variables
+		DECLARE @Column VARCHAR(MAX), @Value VARCHAR(MAX), @lValue VARCHAR(MAX), @hValue VARCHAR(MAX);
 
 		IF @FilterName = 'ContainsFilter'
 		BEGIN
-			
-			DECLARE @Column VARCHAR(MAX), @Value VARCHAR(MAX);
 			
 			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
 			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
@@ -75,8 +75,13 @@ BEGIN
 		END
 		ELSE IF @FilterName = 'EqualsFilter'
 		BEGIN
-			-- Statements to execute if condition2 is true
-			CONTINUE;
+			
+			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
+			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
+			--Executing the EqualsFilter Stored procedure.
+			INSERT INTO CurrentResults
+			EXEC [cp].[EqualsFilter] @SchemaName, @TableName, @Column, @Value;
+
 		END
 		ELSE IF @FilterName = 'GreaterThan'
 		BEGIN
@@ -122,16 +127,16 @@ BEGIN
 
 		IF EXISTS (SELECT 1 FROM CurrentResults)
 		BEGIN
-			IF NOT EXISTS (SELECT 1 FROM FinalResults)
+			IF EXISTS (SELECT 1 FROM FinalResults)
 			BEGIN
 				INSERT INTO TempIntersection
+				SELECT * FROM FinalResults
+				INTERSECT
 				SELECT * FROM CurrentResults;
 			END
 			ELSE
 			BEGIN
 				INSERT INTO TempIntersection
-				SELECT * FROM FinalResults
-				INTERSECT
 				SELECT * FROM CurrentResults;
 			END
 
@@ -144,6 +149,8 @@ BEGIN
 
 			INSERT INTO FinalResults
 			SELECT * FROM TempIntersection;
+
+			DELETE FROM TempIntersection;
 		END
 
 		-- Fetch the next row 
