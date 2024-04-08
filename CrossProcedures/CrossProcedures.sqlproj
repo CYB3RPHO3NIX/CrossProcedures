@@ -71,5 +71,6 @@
     <Build Include="LessThanFilter.sql" />
     <Build Include="NotHasOneOf.sql" />
     <Build Include="Schema\cp.sql" />
+    <Build Include="Filter.sql" />
   </ItemGroup>
 </Project>
