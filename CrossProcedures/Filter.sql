@@ -24,17 +24,17 @@ BEGIN
 
 	--Declare the ResultTable--A
 	DECLARE @ResultsQuery NVARCHAR(MAX);
-	SET @ResultsQuery = 'SELECT * INTO #FinalResults FROM '+@SchemaName+'.'+@TableName+' WHERE 1=0';
+	SET @ResultsQuery = 'SELECT * INTO FinalResults FROM '+@SchemaName+'.'+@TableName+' WHERE 1=0';
 	EXECUTE sp_executesql @ResultsQuery;
 
 	--Declare the CurrentResults--B
 	DECLARE @CurrentResultsQuery NVARCHAR(MAX);
-	SET @CurrentResultsQuery = 'SELECT * INTO #CurrentResults FROM '+@SchemaName+'.'+@TableName+' WHERE 1=0';
+	SET @CurrentResultsQuery = 'SELECT * INTO CurrentResults FROM '+@SchemaName+'.'+@TableName+' WHERE 1=0';
 	EXECUTE sp_executesql @CurrentResultsQuery;
 
 	--Declare the TempIntersection
 	DECLARE @IntersectionQuery NVARCHAR(MAX);
-	SET @IntersectionQuery = 'SELECT * INTO #TempIntersection FROM '+@SchemaName+'.'+@TableName+' WHERE 1=0';
+	SET @IntersectionQuery = 'SELECT * INTO TempIntersection FROM '+@SchemaName+'.'+@TableName+' WHERE 1=0';
 	EXECUTE sp_executesql @IntersectionQuery;
 
 	--Starting the Loop
@@ -64,10 +64,19 @@ BEGIN
 		IF @FilterName = 'ContainsFilter'
 		BEGIN
 			
-			DECLARE @Params NVARCHAR(MAX);
-			SET @Params = QUOTENAME(@SchemaName)+','+QUOTENAME(@TableName)+','+(SELECT STRING_AGG('[' + value + ']', ',') FROM STRING_SPLIT(@Args, ','));
+			DECLARE @Column VARCHAR(MAX), @Value VARCHAR(MAX);
+			
+			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
+			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
+			--Executing the ContainsFilter Stored procedure.
+			
+			DECLARE @SqlExecQuery NVARCHAR(MAX);
+			SET @SqlExecQuery = 'EXEC';
 
-			Select @Params;
+			select @SchemaName, @TableName, @Column, @Value;
+
+			INSERT INTO CurrentResults
+			EXEC [cp].[ContainsFilter] @SchemaName, @TableName, @Column, @Value;
 
 		END
 		ELSE IF @FilterName = 'EqualsFilter'
@@ -117,20 +126,23 @@ BEGIN
 		END
 		--Perform Intersection of Final and Current and store in Temp
 
-		INSERT INTO #TempIntersection
-		SELECT * FROM #FinalResults
-		INTERSECT
-		SELECT * FROM #CurrentResults;
+		IF EXISTS (SELECT 1 FROM CurrentResults)
+		BEGIN
+			INSERT INTO TempIntersection
+			SELECT * FROM FinalResults
+			INTERSECT
+			SELECT * FROM CurrentResults;
 
-		--Delete all from Final and Current
+			--Delete all from Final and Current
 
-		DELETE FROM #FinalResults;
-		DELETE FROM #CurrentResults;
+			DELETE FROM FinalResults;
+			DELETE FROM CurrentResults;
 
-		--Transfer from Intersection to Final
+			--Transfer from Intersection to Final
 
-		INSERT INTO #FinalResults
-		SELECT * FROM #TempIntersection;
+			INSERT INTO FinalResults
+			SELECT * FROM TempIntersection;
+		END
 
 		-- Fetch the next row 
 		FETCH NEXT FROM argCursor INTO @CurrentArgs;
@@ -139,4 +151,11 @@ BEGIN
 
 	-- Deallocate the cursor
 	DEALLOCATE argCursor;
+
+	Select * From FinalResults;
+
+	--Cleanup
+	DROP TABLE FinalResults;
+	DROP TABLE CurrentResults;
+	DROP TABLE TempIntersection;
 END
