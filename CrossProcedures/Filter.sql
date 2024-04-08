@@ -67,8 +67,8 @@ BEGIN
 		IF @FilterName = 'ContainsFilter'
 		BEGIN
 			
-			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
-			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
+			SET @Column = LTRIM(RTRIM(LEFT(@Args, CHARINDEX(',', @Args) - 1)));
+			SET @Value = LTRIM(RTRIM(RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args))));
 			INSERT INTO CurrentResults
 			EXEC [cp].[ContainsFilter] @SchemaName, @TableName, @Column, @Value;
 
@@ -76,23 +76,23 @@ BEGIN
 		ELSE IF @FilterName = 'EqualsFilter'
 		BEGIN
 			
-			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
-			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
+			SET @Column = LTRIM(RTRIM(LEFT(@Args, CHARINDEX(',', @Args) - 1)));
+			SET @Value = LTRIM(RTRIM(RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args))));
 			INSERT INTO CurrentResults
 			EXEC [cp].[EqualsFilter] @SchemaName, @TableName, @Column, @Value;
 
 		END
 		ELSE IF @FilterName = 'GreaterThanFilter'
 		BEGIN
-			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
-			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
+			SET @Column = LTRIM(RTRIM(LEFT(@Args, CHARINDEX(',', @Args) - 1)));
+			SET @Value = LTRIM(RTRIM(RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args))));
 			INSERT INTO CurrentResults
 			EXEC [cp].[GreaterThanFilter] @SchemaName, @TableName, @Column, @Value;
 		END
 		ELSE IF @FilterName = 'GreaterThanOrEqualToFilter'
 		BEGIN
-			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
-			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
+			SET @Column = LTRIM(RTRIM(LEFT(@Args, CHARINDEX(',', @Args) - 1)));
+			SET @Value = LTRIM(RTRIM(RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args))));
 			--Executing the EqualsFilter Stored procedure.
 			INSERT INTO CurrentResults
 			EXEC [cp].[GreaterThanOrEqualToFilter] @SchemaName, @TableName, @Column, @Value;
@@ -102,29 +102,29 @@ BEGIN
 
 			SET @commaPosition = CHARINDEX(',', @Args);
 
-			SET @Column = LEFT(@Args, @commaPosition - 1);
-			SET @Value = RIGHT(@Args, LEN(@Args) - @commaPosition);
+			SET @Column = LTRIM(RTRIM(LEFT(@Args, @commaPosition - 1)));
+			SET @Value = LTRIM(RTRIM(RIGHT(@Args, LEN(@Args) - @commaPosition)));
 			INSERT INTO CurrentResults
 			EXEC [cp].[HasOneOfFilter] @SchemaName, @TableName, @Column, @Value;
 		END
 		ELSE IF @FilterName = 'LessThanFilter'
 		BEGIN
-			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
-			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
+			SET @Column = LTRIM(RTRIM(LEFT(@Args, CHARINDEX(',', @Args) - 1)));
+			SET @Value = LTRIM(RTRIM(RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args))));
 			INSERT INTO CurrentResults
 			EXEC [cp].[LessThanFilter] @SchemaName, @TableName, @Column, @Value;
 		END
 		ELSE IF @FilterName = 'LessThanOrEqualToFilter'
 		BEGIN
-			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
-			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
+			SET @Column = LTRIM(RTRIM(LEFT(@Args, CHARINDEX(',', @Args) - 1)));
+			SET @Value = LTRIM(RTRIM(RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args))));
 			INSERT INTO CurrentResults
 			EXEC [cp].[LessThanOrEqualToFilter] @SchemaName, @TableName, @Column, @Value;
 		END
 		ELSE IF @FilterName = 'NotContainsFilter'
 		BEGIN
-			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
-			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
+			SET @Column = LTRIM(RTRIM(LEFT(@Args, CHARINDEX(',', @Args) - 1)));
+			SET @Value = LTRIM(RTRIM(RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args))));
 			INSERT INTO CurrentResults
 			EXEC [cp].[NotContainsFilter] @SchemaName, @TableName, @Column, @Value;
 		END
@@ -132,15 +132,29 @@ BEGIN
 		BEGIN
 			SET @commaPosition = CHARINDEX(',', @Args);
 
-			SET @Column = LEFT(@Args, @commaPosition - 1);
-			SET @Value = RIGHT(@Args, LEN(@Args) - @commaPosition);
+			SET @Column = LTRIM(RTRIM(LEFT(@Args, @commaPosition - 1)));
+			SET @Value = LTRIM(RTRIM(RIGHT(@Args, LEN(@Args) - @commaPosition)));
 			INSERT INTO CurrentResults
 			EXEC [cp].[NotHasAnyOfFilter] @SchemaName, @TableName, @Column, @Value;
 		END
-		ELSE IF @FilterName = 'Range'
+		ELSE IF @FilterName = 'RangeFilter'
 		BEGIN
-			-- Statements to execute if condition2 is true
-			CONTINUE;
+			SET @commaPosition = CHARINDEX(',', @Args);
+			SET @Column = LTRIM(RTRIM(LEFT(@Args, CHARINDEX(',', @Args) - 1)));
+			SET @Value = LTRIM(RTRIM(RIGHT(@Args, LEN(@Args) - @commaPosition)));
+
+			SELECT @lValue = value
+			FROM STRING_SPLIT(@Value, '~')
+			ORDER BY (SELECT NULL)
+			OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY
+
+			SELECT @hValue = value
+			FROM STRING_SPLIT(@Value, '~')
+			ORDER BY (SELECT NULL)
+			OFFSET 1 ROWS FETCH NEXT 1 ROWS ONLY
+
+			INSERT INTO CurrentResults
+			EXEC [cp].[RangeFilter] @SchemaName, @TableName, @Column, @lValue, @hValue;
 		END
 		--Perform Intersection of Final and Current and store in Temp
 
