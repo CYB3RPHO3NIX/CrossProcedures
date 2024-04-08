@@ -122,10 +122,18 @@ BEGIN
 
 		IF EXISTS (SELECT 1 FROM CurrentResults)
 		BEGIN
-			INSERT INTO TempIntersection
-			SELECT * FROM FinalResults
-			INTERSECT
-			SELECT * FROM CurrentResults;
+			IF NOT EXISTS (SELECT 1 FROM FinalResults)
+			BEGIN
+				INSERT INTO TempIntersection
+				SELECT * FROM CurrentResults;
+			END
+			ELSE
+			BEGIN
+				INSERT INTO TempIntersection
+				SELECT * FROM FinalResults
+				INTERSECT
+				SELECT * FROM CurrentResults;
+			END
 
 			--Delete all from Final and Current
 
