@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [cp].[Filter]
+﻿CREATE PROCEDURE [cp].[Filter]
 	@InputParameters VARCHAR(MAX)
 AS
 BEGIN
