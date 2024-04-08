@@ -11,7 +11,7 @@ BEGIN
     SET @sqlQuery = '
         SELECT *
         FROM ' + QUOTENAME(@SchemaName) + '.' + QUOTENAME(@TableName) + '
-        WHERE ' + QUOTENAME(@ColumnName) + ' IN (''' + REPLACE(@SearchString, '|', ''',''') + ''')
+        WHERE ' + QUOTENAME(@ColumnName) + ' IN (''' + REPLACE(@SearchString, '~', ''',''') + ''')
     '
 
     EXEC sp_executesql @sqlQuery

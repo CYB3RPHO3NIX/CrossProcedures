@@ -99,10 +99,17 @@ BEGIN
 			INSERT INTO CurrentResults
 			EXEC [cp].[GreaterThanOrEqualToFilter] @SchemaName, @TableName, @Column, @Value;
 		END
-		ELSE IF @FilterName = 'HasOneOf'
+		ELSE IF @FilterName = 'HasOneOfFilter'
 		BEGIN
-			-- Statements to execute if condition2 is true
-			CONTINUE;
+
+			DECLARE @commaPosition INT = CHARINDEX(',', @Args);
+
+			SET @Column = LEFT(@Args, @commaPosition - 1);
+			SET @Value = RIGHT(@Args, LEN(@Args) - @commaPosition);
+			
+			--Executing the EqualsFilter Stored procedure.
+			INSERT INTO CurrentResults
+			EXEC [cp].[HasOneOfFilter] @SchemaName, @TableName, @Column, @Value;
 		END
 		ELSE IF @FilterName = 'LessThan'
 		BEGIN
