@@ -111,10 +111,13 @@ BEGIN
 			INSERT INTO CurrentResults
 			EXEC [cp].[HasOneOfFilter] @SchemaName, @TableName, @Column, @Value;
 		END
-		ELSE IF @FilterName = 'LessThan'
+		ELSE IF @FilterName = 'LessThanFilter'
 		BEGIN
-			-- Statements to execute if condition2 is true
-			CONTINUE;
+			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
+			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
+			--Executing the EqualsFilter Stored procedure.
+			INSERT INTO CurrentResults
+			EXEC [cp].[LessThanFilter] @SchemaName, @TableName, @Column, @Value;
 		END
 		ELSE IF @FilterName = 'LessThanOrEqualTo'
 		BEGIN
