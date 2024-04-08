@@ -69,12 +69,6 @@ BEGIN
 			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
 			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
 			--Executing the ContainsFilter Stored procedure.
-			
-			DECLARE @SqlExecQuery NVARCHAR(MAX);
-			SET @SqlExecQuery = 'EXEC';
-
-			select @SchemaName, @TableName, @Column, @Value;
-
 			INSERT INTO CurrentResults
 			EXEC [cp].[ContainsFilter] @SchemaName, @TableName, @Column, @Value;
 
