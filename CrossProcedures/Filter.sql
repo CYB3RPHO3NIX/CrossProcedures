@@ -68,7 +68,6 @@ BEGIN
 			
 			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
 			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
-			--Executing the ContainsFilter Stored procedure.
 			INSERT INTO CurrentResults
 			EXEC [cp].[ContainsFilter] @SchemaName, @TableName, @Column, @Value;
 
@@ -78,7 +77,6 @@ BEGIN
 			
 			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
 			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
-			--Executing the EqualsFilter Stored procedure.
 			INSERT INTO CurrentResults
 			EXEC [cp].[EqualsFilter] @SchemaName, @TableName, @Column, @Value;
 
@@ -87,7 +85,6 @@ BEGIN
 		BEGIN
 			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
 			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
-			--Executing the EqualsFilter Stored procedure.
 			INSERT INTO CurrentResults
 			EXEC [cp].[GreaterThanFilter] @SchemaName, @TableName, @Column, @Value;
 		END
@@ -106,8 +103,6 @@ BEGIN
 
 			SET @Column = LEFT(@Args, @commaPosition - 1);
 			SET @Value = RIGHT(@Args, LEN(@Args) - @commaPosition);
-			
-			--Executing the EqualsFilter Stored procedure.
 			INSERT INTO CurrentResults
 			EXEC [cp].[HasOneOfFilter] @SchemaName, @TableName, @Column, @Value;
 		END
@@ -115,7 +110,6 @@ BEGIN
 		BEGIN
 			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
 			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
-			--Executing the EqualsFilter Stored procedure.
 			INSERT INTO CurrentResults
 			EXEC [cp].[LessThanFilter] @SchemaName, @TableName, @Column, @Value;
 		END
@@ -123,14 +117,15 @@ BEGIN
 		BEGIN
 			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
 			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
-			--Executing the EqualsFilter Stored procedure.
 			INSERT INTO CurrentResults
 			EXEC [cp].[LessThanOrEqualToFilter] @SchemaName, @TableName, @Column, @Value;
 		END
-		ELSE IF @FilterName = 'NotContains'
+		ELSE IF @FilterName = 'NotContainsFilter'
 		BEGIN
-			-- Statements to execute if condition2 is true
-			CONTINUE;
+			SET @Column = LEFT(@Args, CHARINDEX(',', @Args) - 1);
+			SET @Value = RIGHT(@Args, LEN(@Args) - CHARINDEX(',', @Args));
+			INSERT INTO CurrentResults
+			EXEC [cp].[NotContainsFilter] @SchemaName, @TableName, @Column, @Value;
 		END
 		ELSE IF @FilterName = 'NotHasAnyOf'
 		BEGIN
