@@ -62,6 +62,7 @@ BEGIN
 		--we have @FilterName and @Args
 		--global variables
 		DECLARE @Column VARCHAR(MAX), @Value VARCHAR(MAX), @lValue VARCHAR(MAX), @hValue VARCHAR(MAX);
+		DECLARE @commaPosition INT;
 
 		IF @FilterName = 'ContainsFilter'
 		BEGIN
@@ -99,7 +100,7 @@ BEGIN
 		ELSE IF @FilterName = 'HasOneOfFilter'
 		BEGIN
 
-			DECLARE @commaPosition INT = CHARINDEX(',', @Args);
+			SET @commaPosition = CHARINDEX(',', @Args);
 
 			SET @Column = LEFT(@Args, @commaPosition - 1);
 			SET @Value = RIGHT(@Args, LEN(@Args) - @commaPosition);
@@ -127,10 +128,14 @@ BEGIN
 			INSERT INTO CurrentResults
 			EXEC [cp].[NotContainsFilter] @SchemaName, @TableName, @Column, @Value;
 		END
-		ELSE IF @FilterName = 'NotHasAnyOf'
+		ELSE IF @FilterName = 'NotHasAnyOfFilter'
 		BEGIN
-			-- Statements to execute if condition2 is true
-			CONTINUE;
+			SET @commaPosition = CHARINDEX(',', @Args);
+
+			SET @Column = LEFT(@Args, @commaPosition - 1);
+			SET @Value = RIGHT(@Args, LEN(@Args) - @commaPosition);
+			INSERT INTO CurrentResults
+			EXEC [cp].[NotHasAnyOfFilter] @SchemaName, @TableName, @Column, @Value;
 		END
 		ELSE IF @FilterName = 'Range'
 		BEGIN
