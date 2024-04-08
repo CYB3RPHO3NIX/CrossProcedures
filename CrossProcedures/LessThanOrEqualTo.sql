@@ -1,17 +1,17 @@
 ﻿CREATE PROCEDURE [cp].[LessThanOrEqualToFilter] (
-    @schemaName NVARCHAR(128),
-    @tableName NVARCHAR(128),
-    @columnName NVARCHAR(128),
-    @value NVARCHAR(MAX)
+    @SchemaName NVARCHAR(128),
+    @TableName NVARCHAR(128),
+    @ColumnName NVARCHAR(128),
+    @Value NVARCHAR(MAX)
 )
 AS
 BEGIN
     DECLARE @sqlQuery NVARCHAR(MAX)
     SET @sqlQuery = '
         SELECT *
-        FROM ' + QUOTENAME(@schemaName) + '.' + QUOTENAME(@tableName) + '
-        WHERE ' + QUOTENAME(@columnName) + ' <= @value
+        FROM ' + QUOTENAME(@SchemaName) + '.' + QUOTENAME(@TableName) + '
+        WHERE ' + QUOTENAME(@ColumnName) + ' <= @Value
     '
 
-    EXEC sp_executesql @sqlQuery, N'@value NVARCHAR(MAX)', @value
+    EXEC sp_executesql @sqlQuery, N'@Value NVARCHAR(MAX)', @Value
 END
