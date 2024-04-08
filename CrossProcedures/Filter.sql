@@ -1,7 +1,15 @@
 ﻿CREATE PROCEDURE [cp].[Filter]
-	@InputParameters VARCHAR(MAX)
+	@InputParameters VARCHAR(MAX),
+	@PageNumber INT = 1,
+    @PageSize INT = 10
 AS
 BEGIN
+
+	DECLARE @Offset INT;
+    DECLARE @FetchNext INT;
+	SET @Offset = (@PageNumber - 1) * @PageSize;
+    SET @FetchNext = @PageSize;
+
 	DECLARE @Arguments TABLE (Value NVARCHAR(MAX));
 
 	--Storing the arguments in an Array
@@ -194,7 +202,11 @@ BEGIN
 	-- Deallocate the cursor
 	DEALLOCATE argCursor;
 
-	Select * From FinalResults;
+	DECLARE @finalQuery NVARCHAR(MAX);
+	SET @finalQuery = 'Select * From FinalResults ORDER BY (SELECT NULL) OFFSET ' + CAST(@Offset AS NVARCHAR(10)) + ' ROWS
+        FETCH NEXT ' + CAST(@FetchNext AS NVARCHAR(10)) + ' ROWS ONLY';
+
+	EXEC sp_executesql @finalQuery;
 
 	--Cleanup
 	DROP TABLE FinalResults;
