@@ -1,7 +1,9 @@
 ﻿CREATE PROCEDURE [cp].[Filter]
 	@InputParameters VARCHAR(MAX),
 	@PageNumber INT = 1,
-    @PageSize INT = 10
+    @PageSize INT = 10,
+	@TotalRows INT OUTPUT,
+	@TotalPages INT OUTPUT
 AS
 BEGIN
 
@@ -201,6 +203,12 @@ BEGIN
 
 	-- Deallocate the cursor
 	DEALLOCATE argCursor;
+
+	DECLARE @CountQuery NVARCHAR(MAX);
+	SET @CountQuery = 'Select @TotalRows=Count(*) From FinalResults';
+	EXEC sp_executesql @CountQuery, N'@TotalRows INT OUTPUT', @TotalRows OUTPUT;
+	SET @TotalPages = CEILING(CAST(@TotalRows AS DECIMAL) / @PageSize);
+
 
 	DECLARE @finalQuery NVARCHAR(MAX);
 	SET @finalQuery = 'Select * From FinalResults ORDER BY (SELECT NULL) OFFSET ' + CAST(@Offset AS NVARCHAR(10)) + ' ROWS
