@@ -2,7 +2,9 @@
     @SchemaName NVARCHAR(100),
     @TableName NVARCHAR(100),
     @PageNumber INT = NULL,
-    @PageSize INT = NULL
+    @PageSize INT = NULL,
+    @TotalRows INT OUTPUT,
+    @TotalPages INT OUTPUT
 AS
 BEGIN
     DECLARE @SqlQuery NVARCHAR(MAX);
@@ -20,6 +22,13 @@ BEGIN
         SET @Offset = NULL;
         SET @FetchNext = NULL;
     END
+
+    DECLARE @CountQuery NVARCHAR(MAX);
+
+    SET @CountQuery = 'SELECT @TotalRows=COUNT(*) FROM '+ QUOTENAME(@SchemaName) + '.' + QUOTENAME(@TableName);
+    EXEC sp_executesql @CountQuery, N'@TotalRows INT OUTPUT', @TotalRows OUTPUT;
+
+    SET @TotalPages = CEILING(CAST(@TotalRows AS DECIMAL) / @PageSize);
 
     -- Build the dynamic SQL query with optional pagination
     SET @SqlQuery = '
